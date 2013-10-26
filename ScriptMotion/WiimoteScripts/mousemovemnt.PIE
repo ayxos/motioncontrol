@@ -1,0 +1,74 @@
+// Mouse Control Script by marinos35 
+// filename: miiseSNC.pie 
+// Version BETA2 
+// http://WiiMoveU.GooglePages.com 
+
+
+
+// Hide/Show GlovePIE window by double-clicking the Home button 
+if var.run == FALSE then 
+   var.run = TRUE 
+   HidePie 
+   var.hidden = TRUE 
+endif 
+
+if ((DoubleClicked(Wiimote.Home) and Wiimote.HasClassic == FALSE) or DoubleClicked(Home) or DoubleClicked(Wiimote.Classic.Home)) and var.hidden then 
+   ShowPie 
+   var.hidden = FALSE 
+elseif ((DoubleClicked(Wiimote.Home) and Wiimote.HasClassic == FALSE) or DoubleClicked(Home) or DoubleClicked(Wiimote.Classic.Home)) and var.hidden == FALSE then 
+   HidePie 
+   var.hidden = TRUE 
+endif 
+
+
+// Home button enables and disables the buttons. Function similar to the Lock Key 
+var.home = SingleClicked(Wiimote.Home) 
+If var.home and var.on then 
+   var.on = FALSE 
+elseif var.home and var.on = FALSE then 
+   var.on = TRUE 
+endif 
+
+
+// Keys for Wiimote 
+If var.on then 
+    mouse.x = (2 - Wiimote.dot1x / 1023 - Wiimote.dot2x / 1023)/2 
+    mouse.y = (Wiimote.dot1y / 1023 + Wiimote.dot2y / 1023)/2 
+endif 
+Mouse.LeftButton = Wiimote.A 
+Mouse.RightButton = Wiimote.B 
+Up = Wiimote.Up 
+Down = Wiimote.Down 
+Left = Wiimote.Left 
+Right = Wiimote.Right 
+
+
+// Keys for Nunchuk 
+var.joyfix = 5 / 100 
+Mouse.LeftButton = Wiimote.Nunchuk.CButton                                                                                         // C = left mouse click 
+Mouse.RightButton = Wiimote.Nunchuk.ZButton                                                                                        // Z = right mouse click 
+if (Wiimote.Nunchuk.JoyX > var.joyfix or Wiimote.Nunchuk.JoyX < -var.joyfix) then mouse.x = mouse.x + Wiimote.Nunchuk.JoyX/50      // {Analog is used 
+if (Wiimote.Nunchuk.JoyY > var.joyfix or Wiimote.Nunchuk.JoyY < -var.joyfix) then mouse.y = mouse.y + Wiimote.Nunchuk.JoyY/50      //  for mouse movement} 
+
+
+// Keys for Classic Controller 
+Mouse.RightButton = Wiimote.Classic.ZL                                                                                                // ZL = right mouse click 
+Mouse.LeftButton = Wiimote.Classic.L                                                                                                  // L = left mouse click 
+if (Wiimote.Classic.Joy1X > var.joyfix or Wiimote.Classic.Joy1X < -var.joyfix) then mouse.x = mouse.x + Wiimote.Classic.Joy1X/50      // {Left analog is used 
+if (Wiimote.Classic.Joy1Y > var.joyfix or Wiimote.Classic.Joy1Y < -var.joyfix) then mouse.y = mouse.y + Wiimote.Classic.Joy1Y/50      //  for mouse movement} 
+
+
+// LEDs 
+Wiimote.Led1 = var.on 
+Wiimote.Led2 = TRUE 
+Wiimote.Led3 = TRUE 
+Wiimote.Led4 = var.on 
+
+
+// Battery info 
+if Wiimote.Battery <= 12 and var.warned == FALSE then 
+Say "Low Battery" 
+var.warned = TRUE 
+endif 
+var.bat = Wiimote.Battery / 192 * 100 
+debug ='Battery= '+var.bat+'%'

@@ -1,0 +1,109 @@
+﻿
+     // Call Of Duty 4 Wiimote by MetCout
+// Controls By MetCout
+// Capteur requis / Requires a Sensor bar
+// Nunchuk Requis / Require a Nunchuck
+
+// Pointing system is NOT done by me, i've found it on:
+// http://www.wiili.org/index.php/GlovePIE:GlovePIE_Scripts and search for:
+// GlovePIE:RAHCMEFFPSGppppppggg
+
+
+//* Pointeur / Pointing system
+
+//Setup the input (so you can use any analog input with this code
+var.InputX = Wiimote1.Dot1X // X component
+var.InputXRangeStart = 0 Pixels // Smallest X value possible
+var.InputXRangeEnd= 1023 Pixels //Biggest X value possible
+var.InputXRangeSiz= (var.InputXRangeEnd- var.InputXRangeStart ) //calculates the size of the avaiable range
+var.InputY = Wiimote1.Dot1Y // Y component
+var.InputYRangeStart = 0 Pixels // Smallest Y value possible
+var.InputYRangeEnd = 767 Pixels //Biggest Y value possible
+var.InputYRangeSiz= (var.InputYRangeEnd- var.InputYRangeStart ) //calculates the size of the avaiable range
+var.InputEnabled= Wiimote1.Dot1Vis //checks to see if the data is avaiable
+
+
+
+// how much of the Y axis us destuned to "Absolute" motion, 
+// more than this in either direction will go into "Relative" mode
+var.RangeX=(var.InputXRangeSiz / 30)
+// how much of the Y axis us destuned to "Absolute" motion,
+// more than this in either direction will go into "Relative" mode 
+var.RangeY= (var.InputYRangeSiz / 30)
+var.eyesizeX= 600 Mickeys //the size of the "Absolute" X movement in DirectInput units
+var.eyesizeY= 525 Mickeys //the size of the "Absolute" y movement in DirectInput units
+var.edgespeedX= 12 mickeys //Speed of the X axis when in "relative" mode
+var.edgespeedY= 12 Mickeys //Speed of the Y axis when in "relative" mode
+
+
+
+if (var.InputEnabled)then //if the data is avaiable process it
+// X offset in relation to the relative position
+var.Xloc= -MapRange(var.InputX, var.InputXRangeStart , var.InputXRangeEnd, -var.eyesizeX,var.eyesizeX)mickeys
+// Y offset in relation to the relative position 
+var.Yloc= MapRange(var.InputY, var.InputYRangeStart , var.InputYRangeEnd, -var.eyesizeY,var.eyesizeY)mickeys 
+//not used anymore, returns the distance from the relative position, I choose to use the distance per axis instead
+var.dist =sqrt(sqr((var.InputXRangeSiz/2) - var.InputX)+ sqr((var.InputYRangeSiz/2)- var.InputY))
+
+
+
+var.text= "" 
+//if X is bigger than the Absolute range then process it as relative
+if ( sqrt(sqr((var.InputXRangeSiz /2) - var.InputX)) > var.RangeX) then
+// change the relative position based on the direction the cursor is
+var.MiddleX = var.MiddleX+ (Maprange(var.Xloc, -Var.EyeSizex,var.eyesizex, -var.edgespeedX,var.EdgeSpeedX)) 
+var.text =var.text+"edging X " //adds to the debug thing what it is doing
+endif
+//if Y is bigger than the Absolute range then process it as relative
+if ( sqrt(sqr((var.InputYRangeSiz /2) - var.InputY)) > var.RangeY) then
+// change the relative position based on the direction the cursor is 
+var.MiddleY = var.MiddleY+ (Maprange(var.Yloc, -Var.EyeSizeY,var.eyesizeY, -var.edgespeedY,var.EdgeSpeedY))
+var.text= var.text+ "edging Y " //adds to the debug thing what it is doing
+endif
+
+//if inside the absolute rnage then do whatever it is required
+if ((sqrt(sqr(((var.InputYRangeSiz)/2) - var.InputY)) <= var.RangeY)) OR ( sqrt(sqr((var.InputXRangeSiz/2) - var.InputX)) <= var.RangeX)then
+
+var.Text=var.Text+"local "// not much to be done, only ads to the debug thing what it is doing
+
+
+endif
+debug = var.text+ Mouse.DirectInputPos
+//Position the DirectInput cursor based on what it has processed
+Mouse.DirectInputPos = [var.MiddleX + var.Xloc, var.MiddleY + var.Yloc] 
+endif
+//* Fin du pointeur / End of pointing system
+
+
+//* CONTROLS
+
+// Lumière Wiimote / Wiimote Led
+Wiimote.Led1 = true
+Wiimote.Led4 = true
+
+
+// Sauter / Jump
+Keyboard.Space = Wiimote.Nunchuk.CButton
+
+
+
+// Voir Score & Objectifs / Show Score & Objective
+keyboard.Tab = Wiimote.Up
+
+// Changer d'arme / Gun switch
+keyboard.One = Wiimote.Down
+
+// Grenade
+//Keyboard.G = Wiimote.Left
+
+// Flash grenade
+Keyboard.Four = Wiimote.Right
+
+// Viser / Aim
+Keyboard.R = Wiimote.A
+
+// Tirer / Shoot
+Keyboard.A = Wiimote.B
+
+// Utiliser / Use
+Keyboard.F = Wiimote.Minus
